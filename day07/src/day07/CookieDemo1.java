@@ -1,12 +1,18 @@
 package day07;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import sun.misc.BASE64Encoder;
+import sun.security.provider.MD5;
 /**
  * @describe »º´æcookie 
  * @author yjbo
@@ -23,7 +29,18 @@ public class CookieDemo1 extends HttpServlet {
 		Cookie[] cookies = request.getCookies();
 		for (int i = 0; i < cookies.length; i++) {
 			Cookie cookie = cookies[i];
-			System.out.println("i="+cookie.getValue()+";");
+			BASE64Encoder encoder = new BASE64Encoder();
+			String value = cookie.getValue();
+			try {
+				MessageDigest md =  MessageDigest.getInstance("md5");
+				byte[] digest = md.digest(value.getBytes());
+				value = encoder.encode(digest);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.out.println("i="+cookie.getValue()+";==>"+value);
 			if("yjbo".equals(cookie.getName())){
 				response.getWriter().print(cookie.getValue());
 			}
