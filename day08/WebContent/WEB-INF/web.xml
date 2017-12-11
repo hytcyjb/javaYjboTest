@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+<!--   <servlet>
+    <servlet-name>ServletDemo1</servlet-name>
+    <servlet-class>day05.ServletDemo1</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletDemo1</servlet-name>
+    <url-pattern>/2.html</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>ServletDemo2</servlet-name>
+    <servlet-class>day05.ServletDemo2</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletDemo2</servlet-name>
+    <url-pattern>/servlet/ServletDemo2</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>ServletDemo3</servlet-name>
+    <servlet-class>day05.ServletDemo3</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletDemo3</servlet-name>
+    <url-pattern>/servlet/ServletDemo3</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>ServletDemo4</servlet-name>
+    <servlet-class>day05.ServletDemo4</servlet-class>
+    <init-param>
+      <param-name>xxx</param-name>
+      <param-value>yyy</param-value>
+    </init-param>
+    <init-param>
+      <param-name>xxx</param-name>
+      <param-value>zzz</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletDemo4</servlet-name>
+    <url-pattern>/servlet/ServletDemo4</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>ServletDemo5</servlet-name>
+    <servlet-class>day05.ServletDemo5</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletDemo5</servlet-name>
+    <url-pattern>/servlet/ServletDemo5</url-pattern>
+  </servlet-mapping>
+  
+  <context-param>
+    <param-name>xxx</param-name>
+    <param-value>yyaa</param-value>
+  </context-param>
+ --> 
+ <error-page>
+ 	<exception-type>java.lang.ArithmeticException</exception-type>
+ 	<location>/errorpage2.jsp</location>
+ </error-page>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>
