@@ -8,8 +8,8 @@ package yy.yjbo;
 public class Calculator {
 	private double firstNum;// 输入的第一个参数
 	private double secondNum;// 输入的第二个参数
-	private String operator;// +-*/操作符
-
+	private String operator = "+";// +-*/操作符
+	private String result;
 	public double getFirstNum() {
 		return firstNum;
 	}
@@ -34,23 +34,36 @@ public class Calculator {
 		this.operator = operator;
 	}
 
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
+
 	// 计算数据
-	public String calculatatorData() {
+	public void calculatatorData() {
 		switch (operator) {
 		case "+":
-			return String.valueOf((firstNum + secondNum));
+			this.result = String.valueOf((this.firstNum + this.secondNum));
+			break;
 		case "-":
-			return String.valueOf((firstNum - secondNum));
+			this.result =  String.valueOf((this.firstNum - this.secondNum));
+			break;
 		case "*":
-			return String.valueOf((firstNum * secondNum));
+			this.result =  String.valueOf((firstNum * secondNum));
+			break;
 		case "/":
 			if(secondNum == 0){
-				return "tip:第二个数字不能为0";
+				this.result =  "tip:第二个数字不能为0";
+				break;
 			}
-			return String.valueOf((firstNum / secondNum));
+			this.result =  String.valueOf((firstNum / secondNum));
+			break;
 		default:
+			this.result = "空";
 			break;
 		}
-		return "";
 	}
 }
