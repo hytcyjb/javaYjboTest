@@ -5,5 +5,5 @@ eclipsecode文件夹内的内容都是学习java-方立勋-25天开发，以及�
 
 小成就：
 · day09:利用jsp和javabean实现计算器功能；
-  <p><img src="https://github.com/hytcyjb/javaYjboTest/blob/master/day09/WebContent/screenshot1.png?raw=true" width="300" height="570"></p>
+  <p><img src="https://github.com/hytcyjb/javaYjboTest/blob/master/day09/WebContent/screenshot1.png?raw=true"></p>
   
