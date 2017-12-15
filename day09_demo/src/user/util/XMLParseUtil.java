@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.print.Doc;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,26 +18,22 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import sun.net.www.content.text.plain;
 import user.bean.Person;
 import user.except.PersonExistException;
-import user.interfac.IPersonInterface;
 
 /***
  * 解析xml文件
- * 
+ * ***在该数据库中personid和name都是唯一标识，暂不做太深入地修改。以现在的技术越改越乱。
  * @author yjbo
  * @time 2017年12月14日13:45:14
  */
-public class XMLParseUtil implements IPersonInterface {
+public class XMLParseUtil {
 	// 知识点一：2者比较
 	String fileStr = "persons.xml";
 	DocumentBuilder builder = null;
@@ -47,20 +42,57 @@ public class XMLParseUtil implements IPersonInterface {
 	Person person = null;
 	List<Person> pList = new ArrayList<Person>();
 
-	// 查找出所有的用户
-	/**
-	 * {方法功能中文描述}
-	 * 
-	 * @return
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
-	 * @author: xulink@yonyou.com
-	 */
+	// 判断该用户名是否存在---主要是登录时验证用户名是否正确
+	public boolean isExist(String editName)
+			throws ParserConfigurationException, SAXException, IOException {
+		if (editName == null || "".equals(editName)
+				|| "".equals(editName.trim())) {
+			new PersonExistException("请输入用户名！！！");
+			return false;
+		}
+		initDocument();
+		// 测试1：找出所有name标签，返回NodeList
+		NodeList nameList = document.getElementsByTagName("name");
+		// 对符合条件的所有节点进行遍历
+		for (int i = 0; i < nameList.getLength(); i++) {
+			// 获得一个元素
+			String textContent = nameList.item(i).getTextContent();
+			if (editName.equals(textContent)) {
+				new PersonExistException("该用户名已存在，请重新填写！！！");
+				return true;
+			}
+		}
+		new PersonExistException("该用户的用户名不存在，正在注册中。。。");
+		return false;
+	}
 
-	@Override
-	public List<Person> findAllPersons() throws ParserConfigurationException, SAXException, IOException {
+	// 判断用户的id是否存在---主要是注册，以及获取时的唯一标识
+	public boolean isExistId(int personid) throws ParserConfigurationException,
+			SAXException, IOException {
+		if (personid == 0) {
+			new PersonExistException("该用户id为空！！！");
+			return false;
+		}
+		initDocument();
+		// 测试1：找出所有name标签，返回NodeList
+		NodeList pList = document.getElementsByTagName("person");
+		// 对符合条件的所有节点进行遍历
+		for (int i = 0; i < pList.getLength(); i++) {
+			// 获得一个元素
+			String personidStr = ((Element) pList.item(i))
+					.getAttribute("personid");
+			if ((personid + "").equals(personidStr)) {
+				new PersonExistException("该id已存在，请重新生成！！！");
+				return true;
+			}
+		}
+		new PersonExistException("该用户的id不存在!!!");
+		return false;
+	}
 
+	// 【查】查找出所有的用户
+	public List<Person> findAllPersons() throws ParserConfigurationException,
+			SAXException, IOException {
 		initDocument();
 		// 测试1：找出所有person标签，返回NodeList
 		NodeList nodeList0 = document.getElementsByTagName("person");
@@ -84,71 +116,24 @@ public class XMLParseUtil implements IPersonInterface {
 					if ("name".equals(nodeName)) {
 						person.setName(textContent);
 					} else if ("tel".equals(nodeName)) {
-						person.setPersonid(Integer.valueOf(textContent));
+						person.setTel(Integer.valueOf(textContent));
 					} else if ("email".equals(nodeName)) {
 						person.setEmail(textContent);
 					}
 				}
 			}
-			System.out.println(person.toString());
 			pList.add(person);
 		}
 		return pList;
 	}
 
-	// 判断用户是否存在
-	/**
-	 * {方法功能中文描述}
-	 * 
-	 * @param editName
-	 * @return
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
-	 * @author: xulink@yonyou.com
-	 */
-
-	@Override
-	public boolean isExist(String editName) throws ParserConfigurationException, SAXException, IOException {
-		if (editName == null || "".equals(editName) || "".equals(editName.trim())) {
-			new PersonExistException("请输入账号！！！");
-			return false;
-		}
-
-		initDocument();
-		// 测试1：找出所有name标签，返回NodeList
-		NodeList nameList = document.getElementsByTagName("name");
-		// 对符合条件的所有节点进行遍历
-		for (int i = 0; i < nameList.getLength(); i++) {
-			// 获得一个元素
-			String textContent = nameList.item(i).getTextContent();
-			if (editName.equals(textContent)) {
-				new PersonExistException("该账号已存在，请重新填写！！！");
-				return true;
-			}
-		}
-		new PersonExistException("该账号不存在，正在注册中。。。");
-		return false;
-	}
-
-	// 添加用户
-	/**
-	 * {方法功能中文描述}
-	 * 
-	 * @param newPerson
-	 * @throws Exception
-	 * @author: xulink@yonyou.com
-	 */
-
-	@Override
-	public void addPerson(Person newPerson) throws Exception {
+	// 【增】添加用户
+	public String addPerson(Person newPerson) throws Exception {
 		String editName = newPerson.getName();
-		if (editName == null || "".equals(editName) || "".equals(editName.trim())) {
-			new PersonExistException("请输入账号！！！");
-			return;
-		}
-		if (isExist(editName)) {
-			return;
+		int personid = newPerson.getPersonid();
+
+		if (isExist(editName) || isExistId(personid)) {// 此处应该判断id和name，2个同时判断
+			return "该用户名已经被注册，请重新设置！！！";
 		}
 		initDocument();
 		// 4.追加节点
@@ -168,41 +153,21 @@ public class XMLParseUtil implements IPersonInterface {
 		document.getElementsByTagName("persons").item(0).appendChild(personEle);
 
 		saveShowInfo();
-
-		System.out.println("haole");
-
+		return "ok";
 	}
 
-	// 添加列表用户
-	/**
-	 * {方法功能中文描述}
-	 * 
-	 * @param pList
-	 * @throws Exception
-	 * @author: xulink@yonyou.com
-	 */
-
-	@Override
+	// 【增】 添加列表用户
 	public void addMore(List<Person> pList) throws Exception {
 		for (Person person : pList) {
 			addPerson(person);
 		}
 	}
 
-	// 删除某用户
-	/**
-	 * {方法功能中文描述}
-	 * 
-	 * @param editName
-	 * @return
-	 * @throws Exception
-	 * @author: xulink@yonyou.com
-	 */
-
-	@Override
+	// 【删】删除某用户
 	public boolean deletePerson(String editName) throws Exception {
-		if (editName == null || "".equals(editName) || "".equals(editName.trim())) {
-			new PersonExistException("请输入账号！！！");
+		if (editName == null || "".equals(editName)
+				|| "".equals(editName.trim())) {
+			new PersonExistException("请输入用户名！！！");
 			return false;
 		}
 		if (!isExist(editName)) {
@@ -214,7 +179,8 @@ public class XMLParseUtil implements IPersonInterface {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element item = (Element) nodeList.item(i);
 			if (editName.equals(nodeList.item(i).getTextContent())) {
-				nodeList.item(i).getParentNode().getParentNode().removeChild(item.getParentNode());
+				nodeList.item(i).getParentNode().getParentNode()
+						.removeChild(item.getParentNode());
 				saveShowInfo();
 				new PersonExistException("该用户已经删除");
 				return true;
@@ -223,37 +189,23 @@ public class XMLParseUtil implements IPersonInterface {
 		return false;
 	}
 
-	// 删除多个用户
-	/**
-	 * {方法功能中文描述}
-	 * 
-	 * @param pList
-	 * @throws Exception
-	 * @author: xulink@yonyou.com
-	 */
-
-	@Override
+	// 【删】 删除多个用户
 	public void deleteMore(List<Person> pList) throws Exception {
 		for (int i = 0; i < pList.size(); i++) {
 			deletePerson(pList.get(i).getName());
 		}
 	}
 
-	// 修改某个用户
-	/**
-	 * {方法功能中文描述}
-	 * 
-	 * @param person
-	 * @return
-	 * @throws Exception
-	 * @author: xulink@yonyou.com
-	 */
-
-	@Override
+	// 【改】 修改某个用户---根据id进行修改（同时用户名不能与已有用户名重复--这个暂时不限制，需要用不同页面才能判断，比较复杂）
 	public boolean updatePerson(Person person) throws Exception {
-		String editPId = person.getPersonid() + "";
-		if (editPId == null || "".equals(editPId) || "".equals(editPId.trim())) {
-			new PersonExistException("您的账号有问题！！！");
+		int editPId = person.getPersonid();
+		String editPName = person.getName();
+		if (!isExistId(editPId)) {
+			new PersonExistException("该用户id有问题，不能修改！！！");
+		}
+		if (editPName == null || "".equals(editPName)
+				|| "".equals(editPName.trim())) {
+			new PersonExistException("请输入用户的用户名！！！");
 			return false;
 		}
 		initDocument();
@@ -262,17 +214,23 @@ public class XMLParseUtil implements IPersonInterface {
 			Node node = nodeList.item(i);
 			Element element = (Element) node;
 			String personid = element.getAttribute("personid");
-			if (editPId.equals(personid)) {
+			if ((editPId + "").equals(personid)) {
 				NodeList childNodes = element.getChildNodes();
 				for (int j = 0; j < childNodes.getLength(); j++) {
 					Node item = childNodes.item(j);
 					String nodeName = item.getNodeName();
 					if ("name".equals(nodeName)) {
-						item.setTextContent(person.getName());
+						if (!isNull(person.getName())) {
+							item.setTextContent(person.getName());
+						}
 					} else if ("tel".equals(nodeName)) {
-						item.setTextContent(person.getTel() + "");
+						if (person.getTel() != 0) {
+							item.setTextContent(person.getTel() + "");
+						}
 					} else if ("email".equals(nodeName)) {
-						item.setTextContent(person.getEmail());
+						if (!isNull(person.getEmail())) {
+							item.setTextContent(person.getEmail());
+						}
 					}
 				}
 				saveShowInfo();
@@ -284,11 +242,12 @@ public class XMLParseUtil implements IPersonInterface {
 	}
 
 	// 初始化document
-	private void initDocument() throws ParserConfigurationException, SAXException, IOException {
-		fileStr = "persons.xml";//每次都重新赋值
-		 URL url = getClass().getClassLoader().getResource(fileStr);  
-		 fileStr = url.getPath();
-		 System.out.println("当前路径"+fileStr);
+	private void initDocument() throws ParserConfigurationException,
+			SAXException, IOException {
+		fileStr = "persons.xml";// 每次都重新赋值
+		URL url = getClass().getClassLoader().getResource(fileStr);
+		fileStr = url.getPath();
+		System.out.println("当前路径" + fileStr);
 		// 指定File文件
 		File file = new File(fileStr);
 		// 建立DocumentBuilderFactory对象
@@ -307,6 +266,14 @@ public class XMLParseUtil implements IPersonInterface {
 		Source xmlSource = new DOMSource(document);
 		Result outputTarget = new StreamResult(fileStr);
 		transformer.transform(xmlSource, outputTarget);
+	}
 
+	// 判断字符是否为空
+	private boolean isNull(String str) {
+		if (str == null || "".equals(str) || "".equals(str.trim())
+				|| "null".equals(str.trim())) {
+			return true;
+		}
+		return false;
 	}
 }

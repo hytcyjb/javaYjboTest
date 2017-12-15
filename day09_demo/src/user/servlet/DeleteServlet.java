@@ -26,10 +26,9 @@ public class DeleteServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-//		Person person =  new Person(Integer.valueOf(request.getParameter("personid")),request.getParameter("name"),
-//				Integer.valueOf(request.getParameter("tel")),request.getParameter("email"));
-		String nameStr = request.getParameter("name");
-		System.out.println("==="+nameStr);
+		Person person =  new Person(Integer.valueOf(request.getParameter("personid")),request.getParameter("name"),
+				Integer.valueOf(request.getParameter("tel")),request.getParameter("email"));
+		String nameStr = person.getName();
 		try {
 			XMLParseUtil xmlParseUtil = new XMLParseUtil();
 			if(xmlParseUtil.isExist(nameStr)){//登录成功可以查看所有人的列表
