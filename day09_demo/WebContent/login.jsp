@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<!-- http://localhost:8080/day09_demo/index.jsp -->
+<!-- http://localhost:8080/day09_demo/login.jsp -->
 <title>登录界面</title>
 </head>
 <body style="margin-top: 150px; text-align: center;">
