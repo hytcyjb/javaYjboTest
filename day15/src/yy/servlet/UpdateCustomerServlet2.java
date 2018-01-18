@@ -20,7 +20,7 @@ import yy.util.JDBCUtil;
  * @author yjbo
  * @date 2018年1月14日22:41:31
  */
-@WebServlet("/UpdateCustomerServlet")
+@WebServlet("/UpdateCustomerServlet2")
 public class UpdateCustomerServlet2 extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -44,7 +44,7 @@ public class UpdateCustomerServlet2 extends HttpServlet {
 			if (updateCustomer) {
 				ArrayList<Customer> allCustomers = jdbcUtil.findAllCustomers();
 				request.getSession().setAttribute("allCustomer", allCustomers);
-				response.sendRedirect(request.getContextPath()+"/readCustomer.jsp");
+				response.sendRedirect(request.getContextPath()+"/ReadCustomerServlet");
 			} else {
 				request.getSession().setAttribute("tip", "该用户信息有误");
 				response.sendRedirect(request.getContextPath()+"/message.jsp");

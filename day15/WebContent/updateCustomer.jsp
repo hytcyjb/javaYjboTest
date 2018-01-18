@@ -119,7 +119,7 @@
 			<tr>
 				<td style="padding-left: 10px;">生日</td>
 				<td><select id="year" name="year"><!-- 此处选中是selected，与radio选中不同 -->
-						<c:forEach begin="1900" end="2050" var="yc">
+						<c:forEach begin="1800" end="2050" var="yc">
 							<option value="${yc }" ${fn:split(customer.birthday,'-')[0] == yc?'selected':''}>${yc }</option>
 						</c:forEach>
 				</select>年 <select id="month" name="month">

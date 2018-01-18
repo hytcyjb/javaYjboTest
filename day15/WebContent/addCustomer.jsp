@@ -107,7 +107,7 @@
 			<tr>
 				<td style="padding-left: 10px;">生日</td>
 				<td><select id="year" name="year">
-						<c:forEach begin="1900" end="2050" var="yc">
+						<c:forEach begin="1800" end="2050" var="yc">
 							<option value="${yc }">${yc }</option>
 						</c:forEach>
 				</select>年 <select id="month" name="month">
@@ -130,8 +130,8 @@
 			</tr>
 			<tr>
 				<td style="padding-left: 10px;">爱好</td>
-				<td><c:forEach items="${items } " var="ghobby">
-						<input type="checkbox" id="hobby" name="hobby" value="${ghobby.name }.replace(/(^\s+)|(\s+$)/g, '')">${ghobby.name }
+				<td><c:forEach items="${items }" var="ghobby">
+						<input type="checkbox" id="hobby" name="hobby" value="${ghobby.name }">${ghobby.name }
 					</c:forEach></td>
 			</tr>
 			<tr>

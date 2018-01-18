@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,14 +45,43 @@ public class JDBCUtil {
 
 	@Test
 	public void test() {
-		List<Hobby> list = new HobbyList().getList();
-		System.out.println(list.size());
 		// insertCustomer(new Customer("杨建波4", "男", "1992-05-06", "18501481884",
 		// "yangjbm@yonyou.com", "看电影,学习", "普通客户",
 		// "偶遇同楼的女生遛狗，一次就让人绝望了，这辈子是追不上她了"));
-
 	}
+	/**
+	 * @describe 获取总条数数据 
+	 * @author yjbo
+	 * @date 2018年1月16日 下午9:00:44
+	 */
+	public int findAllNum() {
+		int totalNum = 0;
+		initJdbc();
+		try {
+			// 加载驱动包
+			Class.forName(url);
+			// 连接MYSQL
+			con = DriverManager.getConnection(connectSql, sqlCustomer, sqlPasswd);
+			// 执行MYSQL语句
+			psm = con.prepareStatement("SELECT count(*) FROM day15customer");
+			rs = psm.executeQuery();
+			while (rs.next()) {// rs内根据顺序取getString(2);
+				totalNum = rs.getInt(1);
+				System.out.println("一共数据有="+totalNum);
+			}
+			// }
+		} catch (Exception e) {
+			System.out.println("显示所有数据报错，findAllNum原因：" + e.getMessage());
+		} finally {
+			try {
+				closeJdbc();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 
+		return totalNum;
+	}
 	/**
 	 * @describe 获取用户信息 使用的是test2表
 	 * @author yjbo
@@ -97,7 +127,54 @@ public class JDBCUtil {
 
 		return stulist;
 	}
+	
+	/**
+	 * @describe 分页查询数据列表
+	 * 			pageId:从哪一个id开始请求
+	 * 			pageNum：每页请求的数量，一般是10
+	 * @author yjbo
+	 * @date 2018年1月16日 下午9:11:18
+	 */
+	public ArrayList<Customer> findCustomersWithPage(int pageId,int pageNum) {
+		stulist = new ArrayList<>();
+		initJdbc();
+		try {
+			// 加载驱动包
+			Class.forName(url);
+			// 连接MYSQL
+			con = DriverManager.getConnection(connectSql, sqlCustomer, sqlPasswd);
+			// 执行MYSQL语句
+			psm = con.prepareStatement("select id,name,sex,birthday,phone,email,hobby,kind,remarks from day15customer limit "+pageId+","+pageNum+";");
+			rs = psm.executeQuery();
+			// if (!rs.next()) {//不需要添加，没有则走不到while内部
+			// } else {
+			while (rs.next()) {// rs内根据顺序取getString(2);
+				Customer s = new Customer();
+				s.setId(rs.getInt(1));
+				s.setName(rs.getString(2));
+				s.setSex(rs.getString(3));
+				s.setBirthday(rs.getString(4));
+				s.setPhone(rs.getString(5));
+				s.setEmail(rs.getString(6));
+				s.setHobby(rs.getString(7));
+				s.setKind(rs.getString(8));
+				s.setRemarks(rs.getString(9));
+				stulist.add(s);
+				System.out.println(s.toString());
+			}
+			// }
+		} catch (Exception e) {
+			System.out.println("显示所有数据报错，findAllCustomers原因：" + e.getMessage());
+		} finally {
+			try {
+				closeJdbc();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 
+		return stulist;
+	}
 	/**
 	 * @describe 通过id获取该用户的详情信息
 	 * @author yjbo
@@ -300,12 +377,29 @@ public class JDBCUtil {
 			Class.forName(url);
 			// 连接MYSQL
 			con = DriverManager.getConnection(connectSql, sqlCustomer, sqlPasswd);
-			String sql = "insert into day15customer(name,password) values(?,?)";
+			String sql = "insert into day15customer(name,sex,birthday,phone,email,hobby,kind,remarks) values(?,?,?,?,?,?,?,?)";
 			psm = con.prepareStatement(sql);
 			// 执行MYSQL语句
-			for (int i = 0; i < 10000; i++) {
+			for (int i = 0; i < 100; i++) {
+				Random random = new Random();
+				int nextInt = random.nextInt(100);
+				int nextInt0 = 1800 + random.nextInt(216);//年
+				int nextInt1 = random.nextInt(12);//月
+				int nextInt2 = random.nextInt(28);//日
+				int randomInt = random.nextInt(8100410)+1314;
 				psm.setString(1, "yyd" + i);
-				psm.setString(2, "pwd" + i);
+				if(nextInt * i % 3 == 0){
+					psm.setString(2, "男");
+				}else{
+					psm.setString(2, "女");
+				}
+				psm.setString(3, nextInt0+"-"+nextInt1+"-"+nextInt2);
+				psm.setString(4, "188"+nextInt+""+nextInt1+""+nextInt1+""+nextInt2);
+				psm.setString(5, nextInt2+""+nextInt1+""+nextInt1+"@yonyou.com");
+				
+				psm.setString(6, GlobalUtil.gHobby.get(nextInt % 6)+"");
+				psm.setString(7,GlobalUtil.gKind.get(nextInt0%3)+"");
+				psm.setString(8,randomInt+"");
 				psm.addBatch();
 				if (i / 1000 == 0) {// 防止大批量出错,不加会报错，效率的确有所提高，可验证
 					psm.executeBatch();

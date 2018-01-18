@@ -37,7 +37,7 @@ public class DeleteCustomerServlet extends HttpServlet {
 					response.sendRedirect(request.getContextPath()+"/message.jsp");
 				}else{
 					request.getSession().setAttribute("allCustomer", allCustomers);
-					response.sendRedirect(request.getContextPath()+"/readCustomer.jsp");
+					response.sendRedirect(request.getContextPath()+"/ReadCustomerServlet");
 				}
 			}
 		} catch (Exception ex) {
